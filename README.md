@@ -18,13 +18,13 @@ The repository will include:
 - **Name:** Abraham Ajeolu Oluwasegun  
   **Affiliation:** Pan African University of Basic Sciences, Technology and Innovation, Juja-Kiambu, Kenya.
   
--**Name:** NDZI CLIFORD YENGONG 
-**affiliation:** St Louis University institute Cameroon.
----
+- **Name:** NDZI CLIFORD YENGONG 
+  **Affiliation:** St Louis University institute Cameroon.
 
 - **Name:** Ziphozihle Ntwatwa  
   **Affiliation:** University of Cape Town, Neuroscience Institute, Cape Town, South Africa.
-  
+
+---  
 
 ### 🛠 Tools and Technologies
 - GitHub for version control
