@@ -24,6 +24,11 @@ The repository will include:
 - **Name:** Ziphozihle Ntwatwa  
   **Affiliation:** University of Cape Town, Neuroscience Institute, Cape Town, South Africa.
 
+- **Name:** Sharon Wachinga Wathiri  
+  **Affiliation:** University of Nairobi, Kenya.
+
+  
+
 ---  
 
 ### 🛠 Tools and Technologies
