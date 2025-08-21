@@ -18,7 +18,8 @@ The repository will include:
 - **Name:** Abraham Ajeolu Oluwasegun  
   **Affiliation:** Pan African University of Basic Sciences, Technology and Innovation, Juja-Kiambu, Kenya.
   
----
+-**Name:** NDZI CLIFORD YENGONG 
+**affiliation:** St Louis University institute Cameroon.
 
 ### 🛠 Tools and Technologies
 - GitHub for version control
