@@ -1,0 +1,70 @@
+#!/bin/bash
+# FSL-MRS_Pain_Study Automated Processing Script
+
+# Make sure conda is activated with spec2nii and fsl_mrs installed
+conda install-c conda-forge spec2nii
+
+conda install-c conda-forge \-c https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/public/
+ \
+ fsl_mrs
+
+# -------------------------------
+# Step 0: Set working directories
+RAW_DIR=~/Desktop/Raw
+CONVERT_DIR=~/Desktop/MRS_converted
+BIDS_DIR=~/Desktop/MRS_bids
+RESULTS_DIR=~/Desktop/MRS_results
+BASIS_DIR=~/Desktop/Basis_set
+
+mkdir -p "$CONVERT_DIR"
+mkdir -p "$BIDS_DIR"
+mkdir -p "$RESULTS_DIR"
+
+# -------------------------------
+# Step 1: Convert raw Philips files to NIfTI-MRS
+# Loop over all .SDAT files in RAW_DIR
+for sdat_file in "$RAW_DIR"/*.SDAT; do
+    spar_file="${sdat_file%.SDAT}.SPAR"
+    echo "Converting $sdat_file ..."
+    spec2nii philips "$sdat_file" "$spar_file" -o "$CONVERT_DIR"
+done
+
+# -------------------------------
+# Step 2: Preprocessing baseline and dynamic datasets
+# Loop through subjects and sessions (BIDS structure)
+for sub_dir in "$BIDS_DIR"/sub-*; do
+    for ses_dir in "$sub_dir"/ses-*; do
+        MRS_PATH="$ses_dir/mrs"
+        # Find act and ref files
+        ACT_FILE=$(ls "$MRS_PATH"/*_act_noID.nii.gz 2>/dev/null)
+        REF_FILE=$(ls "$MRS_PATH"/*_ref_noID.nii.gz 2>/dev/null)
+
+        if [[ -f "$ACT_FILE" && -f "$REF_FILE" ]]; then
+            OUT_NAME="$RESULTS_DIR/$(basename "$ACT_FILE" .nii.gz)_preproc"
+            echo "Preprocessing $ACT_FILE ..."
+            fsl_mrs_preproc --remove-water --fmrs --verbose --report \
+                --data "$ACT_FILE" \
+                --reference "$REF_FILE" \
+                --output "$OUT_NAME" \
+                --average --align
+        fi
+    done
+done
+
+# -------------------------------
+# Step 3: Fitting processed data to basis set
+for preproc_file in "$RESULTS_DIR"/*_preproc/metab.nii.gz; do
+    OUT_FIT="${preproc_file%_preproc/metab.nii.gz}_fitted"
+    H2O_FILE="${preproc_file%_preproc/metab.nii.gz}/wref.nii.gz"
+
+    if [[ -f "$preproc_file" && -f "$H2O_FILE" ]]; then
+        echo "Fitting $preproc_file ..."
+        fsl_mrs --data "$preproc_file" \
+                --basis "$BASIS_DIR/fsl_basis" \
+                --h2o "$H2O_FILE" \
+                --output "$OUT_FIT" \
+                --report --verbose
+    fi
+done
+
+echo "FSL-MRS processing pipeline completed!"
